@@ -1,41 +1,35 @@
-document.getElementById('userForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent form from submitting the traditional way
-
-    const name = document.getElementById('name').value.trim();
-    const age = document.getElementById('age').value.trim();
-
-    // Basic validation to ensure inputs are not empty
-    if (name === '' || age === '') {
-        alert('Both fields are required!');
-        return;
-    }
-
-    // Convert age to a number and create a promise for age validation
-    const ageNumber = Number(age);
-
-    if (isNaN(ageNumber) || ageNumber <= 0) {
-        alert('Please enter a valid age.');
-        return;
-    }
-
-    // Creating a promise for age validation
-    const ageValidationPromise = new Promise((resolve, reject) => {
+// Function to create a promise based on age
+function checkAge(age, name) {
+    return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if (ageNumber >= 18) {
-                resolve();
+            if (age >= 18) {
+                resolve(`Welcome, ${name}. You can vote.`);
             } else {
-                reject();
+                reject(`Oh sorry ${name}. You aren't old enough.`);
             }
-        }, 4000); // Resolve or reject after 4 seconds
+        }, 4000); // 4 seconds delay
     });
+}
 
-    // Handle the promise resolution or rejection
-    ageValidationPromise
-        .then(() => {
-            alert(`Welcome, ${name}. You can vote.`);
+// Event listener for form submission
+document.getElementById('userForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form from refreshing the page
+
+    const age = document.getElementById('age').value;
+    const name = document.getElementById('name').value;
+
+    // Validate that the fields are not empty
+    if (age === "" || name === "") {
+        alert("Both fields are required.");
+        return;
+    }
+
+    // Call the checkAge function and handle promise resolution/rejection
+    checkAge(Number(age), name)
+        .then((message) => {
+            alert(message);
         })
-        .catch(() => {
-            alert(`Oh sorry, ${name}. You aren't old enough.`);
+        .catch((errorMessage) => {
+            alert(errorMessage);
         });
 });
-
